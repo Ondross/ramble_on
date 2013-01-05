@@ -1,1 +1,63 @@
-<input type="text" name="lname">
+
+<head>
+	<link href="style.css" rel="stylesheet" />	
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+	<script type="text/javascript" src="autoresize.jquery.js"></script>
+	<script type="text/javascript" src="jquery.at.caret.min.js">  //for finding character position of caret</script>
+	<script type="text/javascript" src="jquery.caretposition.js"> //for finding pixel values of caret</script>  
+	<script type="text/javascript" src="thread_def.js"> //object definitions </script>
+	<script type="text/javascript" src="thread_control.js"> //event handler for switching threads </script>
+</head>
+
+<body>
+
+<div id="page">
+<textarea placeholder="Start typing and don't stop..." type="text" wrap="hard" class="thread" id="thread0" ></textarea>
+</div>
+
+<script type="text/javascript">
+//setup first thread
+$(document).ready(function(){
+	$("#thread0").focus();
+	$('textarea').autoResize();
+})
+
+
+//event handler for switching threads
+window.currentThread = new Thread(null, 0, 0);
+window.threads = 1;
+
+
+$("#page").keydown(function(e) {
+	var code = (e.keyCode ? e.keyCode : e.which);
+    if(code == 66) {
+    	if (e.ctrlKey){
+    	  var char_location = $("#thread" + currentThread.id).atCaret('getCaretPosition');
+    	  var caret_height = $("#thread"+ currentThread.id).getCaretPosition().top - 15;
+
+    	  newThread = new Thread(currentThread, threads, currentThread.height + caret_height);
+    	  threads += 1;
+    	  currentThread.children.push(newThread);
+    	  currentThread = newThread;
+
+    	  $("#page").append("<textarea class='thread' id='thread" + currentThread.id + "' placeholder='New Interuption' type='text' wrap='hard' ></textarea>");
+    	  $("#thread" + currentThread.id).focus().css({left: 660 * currentThread.column, top: caret_height + 5 + currentThread.parent.height});
+    	  $("#thread" + currentThread.id).autoResize();
+
+    	}
+    }
+});
+
+$("#page").keydown(function(e) {
+	var code = (e.keyCode ? e.keyCode : e.which);
+    if(code == 73) {
+    	if (e.ctrlKey){
+    	  $("#thread" + currentThread.parent.id).focus();
+    	  currentThread = currentThread.parent;
+    	}
+    }
+});
+//time to start using js objects. Parent thread, #ints, column, etc.
+</script>
+
+</body>

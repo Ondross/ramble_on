@@ -1,12 +1,14 @@
 
 <head>
 	<link href="style.css" rel="stylesheet" />	
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+	<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script> -->
+	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="autoresize.jquery.js"></script>
 	<script type="text/javascript" src="jquery.at.caret.min.js">  //for finding character position of caret</script>
 	<script type="text/javascript" src="jquery.caretposition.js"> //for finding pixel values of caret</script>  
 	<script type="text/javascript" src="thread_def.js"> //object definitions </script>
 	<script type="text/javascript" src="thread_control.js"> //event handler for switching threads </script>
+
 </head>
 
 <body>
@@ -26,38 +28,142 @@ $(document).ready(function(){
 //event handler for switching threads
 window.currentThread = new Thread(null, 0, 0);
 window.threads = 1;
+window.previous_string = "";
+window.previous_location = 0;
+window.length_into_tag = 0;
 
-
-$("#page").keydown(function(e) {
+$(document).keydown(function(e) {
 	var code = (e.keyCode ? e.keyCode : e.which);
-    if(code == 66) {
-    	if (e.ctrlKey){
-    	  var char_location = $("#thread" + currentThread.id).atCaret('getCaretPosition');
-    	  var caret_height = $("#thread"+ currentThread.id).getCaretPosition().top - 15;
+	if (e.ctrlKey){
+        var char_location = $("#" + currentThread.id).atCaret('getCaretPosition');
+    	var caret_height = $("#"+ currentThread.id).getCaretPosition().top - 15;	
 
+    	if(code == 66) { //b
+    	  $("#" + currentThread.id).insertAtCaret(' (*)');
     	  newThread = new Thread(currentThread, threads, currentThread.height + caret_height);
     	  threads += 1;
     	  currentThread.children.push(newThread);
     	  currentThread = newThread;
 
-    	  $("#page").append("<textarea class='thread' id='thread" + currentThread.id + "' placeholder='New Interuption' type='text' wrap='hard' ></textarea>");
-    	  $("#thread" + currentThread.id).focus().css({left: 660 * currentThread.column, top: caret_height + 5 + currentThread.parent.height});
-    	  $("#thread" + currentThread.id).autoResize();
+    	  $("#page").append("<textarea class='thread' id='" + currentThread.id + "' placeholder='New Interuption' type='text' wrap='hard' ></textarea>");
+    	  $("#" + currentThread.id).focus().css({left: 660 * currentThread.column, top: caret_height + 5 + currentThread.parent.height});
+    	  $("#" + currentThread.id).autoResize();
 
+
+    	  //autoscrolling
+    	  var right_border = $(window).width() + $(document).scrollLeft();
+    	  var right_column = currentThread.column * 660;
+
+    	  if (right_border < right_column)  {
+    	  	$(document).scrollLeft(currentThread.column * 660);
+    	  }
     	}
-    }
-});
 
-$("#page").keydown(function(e) {
-	var code = (e.keyCode ? e.keyCode : e.which);
-    if(code == 73) {
-    	if (e.ctrlKey){
-    	  $("#thread" + currentThread.parent.id).focus();
+    	else if(code == 73) { //i
+    	  $("#" + currentThread.parent.id).focus();
     	  currentThread = currentThread.parent;
+    	  alert(length_into_tag);
+        }
+
+    	else if(code == 77) { //m
+		  var val = $("#" + currentThread.id).val();
+
+		  var caret = $("#" + currentThread.id).atCaret('getCaretPosition');
+
+		  //record caret position for returning
+    	  var last_closer = val.indexOf(">");
+		  while(val.indexOf(">", last_closer+1) < char_location && val.indexOf(">", last_closer+1) != -1) {
+		    last_closer = val.indexOf(">", last_closer+1);
+		  }
+		  if (last_closer == -1){last_closer = -2;}
+    	  length_into_tag = char_location - last_closer;
+
+    	  //find last tag ending (beginning of this tag)
+		  var pos = val.indexOf("</keyword>");
+		  if (pos==-1){pos = -14;}
+		  while(val.indexOf("</keyword>", pos+1) < char_location && val.indexOf("</keyword>", pos+1) != -1) {
+		    pos = val.indexOf("</keyword>", pos+1);
+		  }
+
+		  //find last tag opening (beginning of this tag if its tagged)
+		  var open_pos = val.indexOf("<keyword=");
+		  if (open_pos==-1){open_pos = -14;}
+		  while(val.indexOf("<keyword=", open_pos+1) < char_location && val.indexOf("<keyword=", open_pos+1) != -1) {
+		    open_pos = val.indexOf("<keyword=", open_pos+1);
+		  }
+
+		  //if there is an existing tag
+		  if (open_pos > pos){
+		  	$("#" + currentThread.id).atCaret('setCaretPosition', open_pos + 10);
+		  }
+		  else{
+    	    $("#" + currentThread.id).atCaret('setCaretPosition', pos + 14); //go to the end of it
+    	    $("#" + currentThread.id).insertAtCaret(' <keyword= > ');        //write the beginning of this keyword
+    	    $("#" + currentThread.id).atCaret('setCaretPosition', pos + 25); //move to the = in that
+    	  }
     	}
-    }
+
+    	if(code == 13) { //enter
+    	  var val = $("#" + currentThread.id).val();
+
+    	  //find the last ">""
+		  var pos = 0;
+		  while(val.indexOf(">", pos+1) < char_location && val.indexOf(">", pos+1) != -1) {
+		    pos = val.indexOf(">", pos+1);
+		  }
+		  if (pos==-1){pos = -14;}
+
+		  //find "<keyword" to see if you're inside a keyword tag.
+		  var open_pos = 0
+		  while(val.indexOf("<keyword", open_pos+1) < char_location && val.indexOf("<keyword", open_pos+1) != -1) {
+		    open_pos = val.indexOf("<keyword", open_pos+1);
+		  }
+		  if (open_pos==-1){open_pos = -14;}
+
+		  //if you're in a tag
+		  if (open_pos > pos){
+				var pos = val.indexOf(">", char_location);
+    	  		$("#" + currentThread.id).atCaret('setCaretPosition', pos + length_into_tag);
+    	  		event.preventDefault();				
+			}
+		  else {
+				$("#" + currentThread.id).insertAtCaret(' </keyword> \n \n');
+			}
+    	}
+
+    	if(code == 38){ //up  --seek backwards by keyword
+		  var val = $("#" + currentThread.id).val();
+
+		  var pos = val.indexOf("<keyword");
+		  if (pos==-1){pos = -10;}
+		  while(val.indexOf("<keyword", pos+1) < char_location && val.indexOf("<keyword", pos+1) != -1) {
+		    pos = val.indexOf("<keyword", pos+1);
+		  }
+		  if(val.indexOf(">", pos) == char_location){
+		  	$("#" + currentThread.id).atCaret('setCaretPosition', pos);
+		  }
+		  else{
+		  	$("#" + currentThread.id).atCaret('setCaretPosition', val.indexOf(">", pos) + 1);
+		  }    		
+    	}
+	   }
+	
 });
-//time to start using js objects. Parent thread, #ints, column, etc.
+
+
+//Features: b, i, m, enter, up
+
+//TODO: interpret the markdown I've created
+//		allow expand/contract  (make a js function that hides it and replaces it with it's keyword. Does that mean I need to create new divs when I make a new keyword? And force a new paragraph? That'd be okay... then I have to not allow typing in the form after the keyword tag. maybe it's not even part of the form, maybe I position it after the form.)
+//		add down, left, right, arrow functionality
+
+//		tell me if I've made a connection
+
+//		if my idea kinda changes what the keyword is in the midst of a paragraph, I shouldn't feel like I need to go back and separate it out. This is freewriting after all. Things come up out of nowhere and you shouldn't have to think how they fit together as they come into your mind.
+//		fix bug where if you have a long, repetitive previous string "aaaaaaaa" you'll end up in the wrong spot. Probably just find the length of the string from the tag to where you are and go back to that, instead of dealing with previous string bs.
+//		make it so interruptions scroll with their marker.
+//		use functions
+
 </script>
 
 </body>

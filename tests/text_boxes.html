@@ -71,10 +71,7 @@ $(document).keydown(function(e) {
 		  var caret = $("#" + currentThread.id).atCaret('getCaretPosition');
 
 		  //record caret position for returning
-    	  var last_closer = val.indexOf(">");
-		  while(val.indexOf(">", last_closer+1) < char_location && val.indexOf(">", last_closer+1) != -1) {
-		    last_closer = val.indexOf(">", last_closer+1);
-		  }
+    	  var last_closer = find_recent_substring(char_location, val, ">");
 		  if (last_closer == -1){last_closer = -2;}
     	  length_into_tag = char_location - last_closer;
 

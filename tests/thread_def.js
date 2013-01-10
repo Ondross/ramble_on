@@ -6,3 +6,8 @@ function Thread(parent, id, top){
 	this.children = [];
 	this.top = top;
 }
+
+function Cell(thread, top){
+	this.thread = thread;
+	this.top = top;
+}

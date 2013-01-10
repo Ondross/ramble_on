@@ -39,18 +39,7 @@ $(document).keydown(function(e) {
     	var caret_height = $("#"+ currentThread.id).getCaretPosition().top - 15;	
 
     	if(code == 66) { //b
-    		//create reference to child
-	    	$("#" + currentThread.id).insertAtCaret(' (*)');
-
-	    	//create child
-	    	currentThread = new_child_thread(currentThread, caret_height);
-
-	    	//autoscroll to see child
-	    	var right_border = $(window).width() + $(document).scrollLeft();
-	    	var right_column = currentThread.column * 660;
-	    	if (right_border < right_column)  {
-	    		$(document).scrollLeft(currentThread.column * 660);
-	    	}
+	    	currentThread = spawn_child(currentThread, get_caret_height(currentThread.id));
     	}
 
     	else if(code == 73) { //i
@@ -128,6 +117,8 @@ $(document).keydown(function(e) {
 //		make it so interruptions scroll with their marker.
 //		use functions
 //		fix whitespace problem with caret height...
+//		start saving to a node server
+//		make an interface for browsing old ideas. File system: folders are like "paper" app's notebooks. flip pages to see previews.
 
 </script>
 

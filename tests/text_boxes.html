@@ -47,6 +47,7 @@ $(document).keydown(function(e) {
     	}
 
     	else if(code == 73) { //i
+    		$("#" + currentStrand.id).addClass("collapsed");
     	    currentStrand = change_strand(currentThread.parent_strand);
 	    	currentThread = currentStrand.thread;
         }
@@ -112,17 +113,27 @@ $(document).keydown(function(e) {
 	
 });
 
-//TODO: interpret the markdown I've created
-//		add down, left, right, arrow functionality
-//		how do we navigate to previous interruptions?
-//		tell me if I've made a connection
-//		keep the user from messing up state by using the mouse
-//		if my idea kinda changes what the keyword is in the midst of a paragraph, I shouldn't feel like I need to go back and separate it out. This is freewriting after all. Things come up out of nowhere and you shouldn't have to think how they fit together as they come into your mind.
-//		make it so interruptions scroll with their marker if the marker height changes.
-//		use functions
+//collapsible TODO:
+//		create an icon for a collapsed strand that shows it's keywords, render that when something is hidden. Underneath?
+
+//backend TODO:
 //		start saving to a node server
+//		interpret my raw markdown and render it like in the editor
+
+//design TODO:
 //		make an interface for browsing old ideas. File system: folders are like "paper" app's notebooks. flip pages to see previews.
-//		create an icon for a collapsed strand that shows it's keywords
+//		if my idea kinda changes what the keyword is in the midst of a paragraph, I shouldn't feel like I need to go back and separate it out. This is freewriting after all. Things come up out of nowhere and you shouldn't have to think how they fit together as they come into your mind.
+//		tell me if I've made a connection
+//		how do we navigate to previous interruptions?
+
+//bugs TODO:
+//		make it so interruptions scroll with their marker if the marker height changes.
+//		keep the user from messing up state by using the mouse
+
+//polish TODO:
+//		use more functions/methods
+
+
 </script>
 
 </body>

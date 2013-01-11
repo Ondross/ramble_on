@@ -21,30 +21,35 @@ function get_length_into_tag(caret, string){
     return length_into_tag;
 }
 
-function new_text_area(type, id, placeholder){
+function child_thread_html(thread, placeholder){
 
-    $("#page").append("<textarea class='" + type + "' id='" + id + "' placeholder='" + placeholder + "' type='text' wrap='hard' ></textarea>");
+    //$("#page").append("<div class='thread' id='thread" + thread.id + "' >" + "
+        //<textarea class='strand' id='" + thread.id + "' placeholder='New Interruption' type='text' wrap='hard' ></textarea>");
+    $("#page").append($('<div>').attr('id', thread.id).attr('class', 'thread').
+    append($('<textarea>').attr('id', thread.id + 'strand0').attr('class', 'strand').attr('placeholder','New Interruption...')));
 }
 
-function new_child_thread(parent, height_in_parent){
+function new_child_thread(parent_strand, height_in_parent){
     /*creates a new interruption*/
 
     //create the instance
-    newThread = new Thread(parent, threads, parent.top + height_in_parent);
+    parent = parent_strand.thread;
+    newThread = new Thread(parent, threads, parent.top + height_in_parent, parent_strand);
+    newStrand = new Strand(newThread, 0, 0);
     threads += 1;
     parent.children.push(newThread);
 
     //write the html
-    new_text_area("thread", newThread.id, "New Interruption");
-    $("#" + newThread.id).focus().css({left: 660 * newThread.column, top: 5 + newThread.top});
-    $("#" + newThread.id).autoResize();
+    child_thread_html(newThread);
+    $("#" + newThread.id).css({left: 660 * newThread.column, top: 5 + newThread.top});
+    $("#" + newStrand.id).focus().autoResize();
 
-    return newThread;
+    return newStrand;
 }
 
-function change_thread(thread){
-    $("#" + thread.id).focus();
-    return thread;
+function change_strand(strand){
+    $("#" + strand.id).focus();
+    return strand;
 }
 
 function move_caret(area_id, index){
@@ -79,24 +84,25 @@ function get_caret_height(area_id){
     index = index + how_many_instance(substring, "\n") * 3;             //increase index to include all newlines
     substring = substring.replace(/\n/g, "<br>").substring(0, index);   //make newlines html readable
     $("#page").append("<p id='measurer' type='text' wrap='hard' >" + substring + "</p>");  //make html object
-    height = $('#measurer').height() - 9;                                                 
+    height = $('#measurer').height();                                                 
     $('#measurer').remove();                                            //delete temporary html object
     return height;
 }
 
-function spawn_child(parent, height_in_parent) {
+function spawn_child(parent_strand) {
     //create reference to child
-    $("#" + parent.id).insertAtCaret(' (*)');
+    $("#" + parent_strand.id).insertAtCaret(' (*)');
 
     //create child
-    newThread = new_child_thread(parent, height_in_parent);
+    height_in_parent = get_caret_height(parent_strand.id) + parent_strand.top - 15;
+    newStrand = new_child_thread(parent_strand, height_in_parent);
 
     //autoscroll to see child
     var right_border = $(window).width() + $(document).scrollLeft();
-    var right_column = parent.column * 660;
+    var right_column = (newThread.column + 1) * 660;
     if (right_border < right_column)  {
-        $(document).scrollLeft(parent.column * 660);
+        $(document).scrollLeft((newThread.column + 1) * 660);
     }
 
-    return newThread;
+    return newStrand;
 }

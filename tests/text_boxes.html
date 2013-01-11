@@ -14,19 +14,22 @@
 <body>
 
 <div id="page">
-<textarea placeholder="Start typing and don't stop..." type="text" wrap="hard" class="thread" id="thread0" ></textarea>
+	<div class = "thread" id = "thread0">
+		<textarea placeholder="Start typing and don't stop..." type="text" wrap="hard" class="strand" id="thread0strand0" ></textarea>
+	</div>
 </div>
 
 <script type="text/javascript">
 //setup first thread
 $(document).ready(function(){
-	$("#thread0").focus();
+	$("#thread0strand0").focus();
 	$('textarea').autoResize();
 })
 
 
 //event handler for switching threads
-window.currentThread = new Thread(null, 0, 0);
+window.currentThread = new Thread(null, 0, 0, null);
+window.currentStrand = new Strand(currentThread, 0, 0);
 window.threads = 1;
 window.length_into_tag = 0;
 
@@ -35,19 +38,21 @@ $(document).keydown(function(e) {
 	if (e.ctrlKey){
 		//event.preventDefault();				
 
-        var char_location = get_caret_location(currentThread.id);
-    	var caret_height = $("#"+ currentThread.id).getCaretPosition().top - 15;	
+        var char_location = get_caret_location(currentStrand.id);
+    	var caret_height = $("#"+ currentThread.id).getCaretPosition().top - 15;
 
     	if(code == 66) { //b
-	    	currentThread = spawn_child(currentThread, get_caret_height(currentThread.id));
+	    	currentStrand = spawn_child(currentStrand);
+	    	currentThread = currentStrand.thread;
     	}
 
     	else if(code == 73) { //i
-    	  currentThread = change_thread(currentThread.parent);
+    	    currentStrand = change_strand(currentThread.parent_strand);
+	    	currentThread = currentStrand.thread;
         }
 
     	else if(code == 77) { //m
-			var val = $("#" + currentThread.id).val();
+			var val = $("#" + currentStrand.id).val();
 
 			//record caret position for returning
 	    	length_into_tag = get_length_into_tag(char_location, val);
@@ -62,17 +67,17 @@ $(document).keydown(function(e) {
 
 			//if there is an existing tag
 			if (open_pos > pos){
-			  	move_caret(currentThread.id, open_pos + 10);
+			  	move_caret(currentStrand.id, open_pos + 10);
 			}
 			else{
-	    	    move_caret(currentThread.id, pos + 14);                     //go to the end of the tag closing
-	    	    $("#" + currentThread.id).insertAtCaret(' <keyword= > ');   //write the beginning of the tag
-	    	    move_caret(currentThread.id, pos + 25);                     //move to the = in the tag
+	    	    move_caret(currentStrand.id, pos + 14);                     //go to the end of the tag closing
+	    	    $("#" + currentStrand.id).insertAtCaret(' <keyword= > ');   //write the beginning of the tag
+	    	    move_caret(currentStrand.id, pos + 25);                     //move to the = in the tag
 	    	}
     	}
 
     	if(code == 13) { //enter
-	    	var val = $("#" + currentThread.id).val();
+	    	var val = $("#" + currentStrand.id).val();
 
 	    	//find the last ">""
 			var pos = find_recent_substring(char_location, val, ">");
@@ -85,10 +90,14 @@ $(document).keydown(function(e) {
 			//if you're in a tag
 			if (open_pos > pos){
 				var pos = val.indexOf(">", char_location);
-	    	  	move_caret(currentThread.id, pos + length_into_tag);
+	    	  	move_caret(currentStrand.id, pos + length_into_tag);
 			}
 			else {
-				$("#" + currentThread.id).insertAtCaret(' </keyword> \n \n');
+				$("#" + currentStrand.id).insertAtCaret(' </keyword>');
+				var new_top = currentStrand.top + $("#" + currentStrand.id).height();
+				currentStrand = new Strand(currentStrand.thread, currentStrand.rank + 1, new_top);
+				$("#" + currentStrand.thread.id).append($('<textarea>').attr('class', 'strand').attr('id', currentStrand.id));
+    			$("#" + currentStrand.id).focus().autoResize();
 			}
     	}
 

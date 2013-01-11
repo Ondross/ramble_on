@@ -1,3 +1,5 @@
 .thread{border:none; width:644; outline:none; resize: none; position:absolute; font-family:helvetica; font-size:12;}
 
-#measurer{border:none; width:644; outline:none; resize: none; position:absolute; font-family:helvetica; font-size:12; padding-top:0; margin-top:6; word-wrap: break-word;}
+.strand{border:none; width:644; outline:none; resize: none; position:static; font-family:helvetica; font-size:12;}
+
+#measurer{border:none; width:640; outline:none; resize: none; position:absolute; font-family:helvetica; font-size:12; padding-top:0; margin-top:6; word-wrap: break-word;}

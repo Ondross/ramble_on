@@ -39,7 +39,7 @@ $(document).keydown(function(e) {
 		//event.preventDefault();				
 
         var char_location = get_caret_location(currentStrand.id);
-    	var caret_height = $("#"+ currentThread.id).getCaretPosition().top - 15;
+    	var caret_height = $("#"+ currentStrand.id).getCaretPosition().top - 15;
 
     	if(code == 66) { //b
 	    	currentStrand = spawn_child(currentStrand);
@@ -112,23 +112,17 @@ $(document).keydown(function(e) {
 	
 });
 
-
-//Features: b, i, m, enter, up
-
 //TODO: interpret the markdown I've created
-//		allow expand/contract  (make a js function that hides it and replaces it with it's keyword. Does that mean I need to create new divs when I make a new keyword? And force a new paragraph? That'd be okay... then I have to not allow typing in the form after the keyword tag. maybe it's not even part of the form, maybe I position it after the form.)
 //		add down, left, right, arrow functionality
-
+//		how do we navigate to previous interruptions?
 //		tell me if I've made a connection
-
+//		keep the user from messing up state by using the mouse
 //		if my idea kinda changes what the keyword is in the midst of a paragraph, I shouldn't feel like I need to go back and separate it out. This is freewriting after all. Things come up out of nowhere and you shouldn't have to think how they fit together as they come into your mind.
-//		fix bug where if you have a long, repetitive previous string "aaaaaaaa" you'll end up in the wrong spot. Probably just find the length of the string from the tag to where you are and go back to that, instead of dealing with previous string bs.
-//		make it so interruptions scroll with their marker.
+//		make it so interruptions scroll with their marker if the marker height changes.
 //		use functions
-//		fix whitespace problem with caret height...
 //		start saving to a node server
 //		make an interface for browsing old ideas. File system: folders are like "paper" app's notebooks. flip pages to see previews.
-
+//		create an icon for a collapsed strand that shows it's keywords
 </script>
 
 </body>

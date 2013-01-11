@@ -2,4 +2,6 @@
 
 .strand{border:none; width:644; outline:none; resize: none; position:static; font-family:helvetica; font-size:12;}
 
+.collapsed{border:none; width:644; outline:none; resize: none; position:static; font-family:helvetica; font-size:12; visibility: hidden;}
+
 #measurer{border:none; width:640; outline:none; resize: none; position:absolute; font-family:helvetica; font-size:12; padding-top:0; margin-top:6; word-wrap: break-word;}

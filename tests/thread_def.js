@@ -14,4 +14,5 @@ function Strand(thread, rank, top){
 	this.thread = thread;
 	this.top = top;
 	this.id = thread.id + "strand" + rank;
+	this.left = this.thread.column * 660;
 }

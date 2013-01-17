@@ -1,0 +1,40 @@
+red thread continues, blue thread comes off and so does the green thread. so in the middle of the text I see (Interrupt idea), I can click on that and expand it somehow. At any point, I need hotkeys for:
+-Interrupt
+-Add keyword
+-Add inline header (keeping important concepts visible for the thread for later) (maybe the same as keyword)
+-Go to last interrupt
+
+this also needs to be a good journal for regular writing. That should be easy.
+
+can I solve the problem of ideating? Like what I'm doing now? Onenote is good for that... Can I encourage lots of webs? what if in "web view" they can just click nodes and expand them? Almost like what you might use a spreadsheet for... lists? Yes. In web view mode, you can click on a keyword and see everything that is tagged as that (everything is related to some keyword). That way you can click around and make lists, you can insert keywords in between other ones, etc.
+
+To solve:
+interruption when there are keywords that relate to your writing
+how does a fork look?
+How does the file system work? Folders?
+
+Markdown
+------------
+if it's just text:
+<keyword = balls> balls <interrupt><keyword =butts> yabayaba </keyword><keyword = nuts> nutty guys </keyword></interrupt>
+
+select all text up to a keywordend, interrupt begin, or interrupt end and put it in a textarea with strand id n = 0.
+if it's a keyword end:
+	make a new textarea in the same column just below
+elseif it's an interrupt begin:
+	make a new textarea at the same height in the next column
+elseif it's an interrupt end:
+	look up interrupts caret location and parent strand and put caret back there
+
+
+if it is objects:
+
+
+
+seems to make sense that each strand is an object that's related to the others. That is more modular, and each strand has properties that I want to access anyway, such as keyword (and I can now give them positions too, although will that change in browsers?? This is the fundamental question I need to figure out before I can move forward just storing the strands' positions. Alternatively, I could just store the important caret information and try to build it from there). Modifying a strand's keyword is better than modifying some text that represents that.
+I also already have the object stored, I can just give them some extra info for building from scratch (such as the actual text content). How will I store these objects in the db?
+
+user, thread attributes, strand attributes
+
+
+what about the bug I was having earlier where textareas that I build don't resize until I click in them?? Maybe I can give them an absolute size to begin with, since I might know that size.
